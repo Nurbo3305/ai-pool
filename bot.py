@@ -7,6 +7,161 @@
 # from google import genai
 # from google.genai import types as ai_types
 # from dotenv import load_dotenv
+# import os
+# import asyncio
+# from aiogram import Bot, Dispatcher, types
+# from aiogram.filters import CommandStart
+# from google import genai
+# from google.genai import types as ai_types
+# from dotenv import load_dotenv
+# from aiohttp import web  # Используем aiohttp вместо Flask
+
+# load_dotenv()
+
+# # --- КРОШЕЧНЫЙ ВЕБ-СЕРВЕР ДЛЯ RENDER ---
+# async def handle(request):
+#     return web.Response(text="Бот запущен и работает!")
+
+# async def start_web_server():
+#     app = web.Application()
+#     app.router.add_get('/', handle)
+#     runner = web.AppRunner(app)
+#     await runner.setup()
+    
+#     # Берём порт, который требует Render, или 8000 по умолчанию
+#     port = int(os.environ.get("PORT", 8000))
+#     site = web.TCPSite(runner, '0.0.0.0', port)
+#     await site.start()
+#     print(f"Веб-сервер успешно запущен на порту {port}")
+
+
+
+
+# def run():
+#     # Render сам выдает порт, на котором должен работать "сайт"
+#     port = int(os.environ.get("PORT", 8000))
+#     app.run(host='0.0.0.0', port=port)
+
+# def keep_alive():
+#     t = Thread(target=run)
+#     t.start()
+
+
+# load_dotenv()  # Эта строка находит файл .env и загружает ключи
+# # Инициализируем бота и диспетчер
+
+# TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+# GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+# bot = Bot(token=TELEGRAM_TOKEN)
+# dp = Dispatcher()
+
+# # Инициализируем клиента Gemini
+# ai_client = genai.Client(api_key=GEMINI_API_KEY)
+
+# async def main():
+#     keep_alive() # <--- Добавь эту строчку сюда!
+#     print("ИИ-Бот запущен через VS Code...")
+#     await dp.start_polling(bot)
+
+
+# if __name__ == "__main__":
+#     # 1. Запускаем веб-сервер в фоновом потоке
+#     keep_alive()
+#     print("Веб-сервер запущен, включаю бота...")
+    
+#     # 2. Запускаем самого бота (замени на свою команду, если она отличается)
+#     bot.infinity_polling(none_stop=True)
+
+
+# # Словарь для хранения истории чата для каждого пользователя
+# # Ключ — id пользователя в Телеграм, значение — объект чата Gemini
+# user_chats = {}
+
+# @dp.message(CommandStart())
+# async def start_cmd(message: types.Message):
+#     user_id = message.from_user.id
+    
+#     # При старте создаем чистый диалог с системной инструкцией (характером бота)
+#     user_chats[user_id] = ai_client.chats.create(
+#         model="gemini-2.5-flash",
+#         config=ai_types.GenerateContentConfig(
+#             system_instruction="Ты — крутой, сообразительный и дружелюбный ИИ-ассистент в Telegram. Отвечай кратко, ёмко и по делу."
+#         )
+#     )
+    
+#     await message.reply(
+#         f"Привет, {message.from_user.first_name}! 👋\n"
+#         "Я твой личный ИИ-бот с памятью. Я запоминаю наш диалог, так что можешь общаться со мной как с реальным собеседником!"
+#     )
+
+# @dp.message()
+# async def handle_message(message: types.Message):
+#     user_id = message.from_user.id
+    
+#     # Если пользователь не нажал /start, но сразу пишет, создаем ему сессию чата
+#     if user_id not in user_chats:
+#         user_chats[user_id] = ai_client.chats.create(model="gemini-2.5-flash")
+        
+#     await message.bot.send_chat_action(chat_id=message.chat.id, action="typing")
+    
+#     try:
+#         # Берем чат конкретного пользователя и отправляем туда сообщение
+#         # Метод send_message автоматически сохраняет историю внутри этой сессии!
+#         chat = user_chats[user_id]
+#         response = chat.send_message(message.text)
+        
+#         await message.reply(response.text)
+        
+#     except Exception as e:
+#         await message.reply(f"Ошибка при генерации ответа: {e}")
+
+# async def main():
+#     print("ИИ-Бот запущен через VS Code...")
+#     await dp.start_polling(bot)
+
+# if __name__ == "__main__":
+#     asyncio.run(main())
+
+
+
+
+# app = Flask('')
+
+# @app.route('/')
+# def home():
+#     return "Бот запущен!"
+
+# def run():
+#     port = int(os.environ.get("PORT", 8000))
+#     app.run(host='0.0.0.0', port=port)
+
+# def keep_alive():
+#     t = Thread(target=run)
+#     t.start()
+
+# # Главная функция запуска aiogram
+# async def main():
+#     keep_alive() # Включаем веб-сервер для Render
+#     print("Сервер запущен, включаю aiogram бота...")
+    
+#     # Твой объект dispatcher (dp) должен быть создан выше в коде
+#     await dp.start_polling(bot) 
+
+
+
+# async def main():
+#     # 1. Сначала запускаем веб-сервер, чтобы Render сразу увидел открытый порт
+#     await start_web_server()
+    
+#     print("ИИ-Бот запущен через VS Code...")
+    
+#     # 2. Запускаем опрос Telegram (убедись, что dp и bot созданы выше в коде)
+#     await dp.start_polling(bot)
+
+# if name == "main":
+#     asyncio.run(main())
+
 import os
 import asyncio
 from aiogram import Bot, Dispatcher, types
@@ -14,11 +169,23 @@ from aiogram.filters import CommandStart
 from google import genai
 from google.genai import types as ai_types
 from dotenv import load_dotenv
-from aiohttp import web  # Используем aiohttp вместо Flask
+from aiohttp import web
 
+# Загружаем переменные окружения (.env)
 load_dotenv()
 
-# --- КРОШЕЧНЫЙ ВЕБ-СЕРВЕР ДЛЯ RENDER ---
+TOKEN = os.getenv("BOT_TOKEN")
+# Токен для нового клиента Google GenAI API
+GEMINI_TOKEN = os.getenv("GEMINI_TOKEN") 
+
+# Инициализируем бота и диспетчер aiogram
+bot = Bot(token=TOKEN)
+dp = Dispatcher()
+
+# Инициализируем клиента ИИ (Gemini)
+ai_client = genai.Client(api_key=GEMINI_TOKEN)
+
+# --- АСИНХРОННЫЙ ВЕБ-СЕРВЕР ДЛЯ RENDER ---
 async def handle(request):
     return web.Response(text="Бот запущен и работает!")
 
@@ -28,135 +195,41 @@ async def start_web_server():
     runner = web.AppRunner(app)
     await runner.setup()
     
-    # Берём порт, который требует Render, или 8000 по умолчанию
+    # Render сам передает порт в переменную окружения PORT
     port = int(os.environ.get("PORT", 8000))
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
     print(f"Веб-сервер успешно запущен на порту {port}")
 
-
-
-
-def run():
-    # Render сам выдает порт, на котором должен работать "сайт"
-    port = int(os.environ.get("PORT", 8000))
-    app.run(host='0.0.0.0', port=port)
-
-def keep_alive():
-    t = Thread(target=run)
-    t.start()
-
-
-load_dotenv()  # Эта строка находит файл .env и загружает ключи
-# Инициализируем бота и диспетчер
-
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-bot = Bot(token=TELEGRAM_TOKEN)
-dp = Dispatcher()
-
-# Инициализируем клиента Gemini
-ai_client = genai.Client(api_key=GEMINI_API_KEY)
-
-async def main():
-    keep_alive() # <--- Добавь эту строчку сюда!
-    print("ИИ-Бот запущен через VS Code...")
-    await dp.start_polling(bot)
-
-
-if __name__ == "__main__":
-    # 1. Запускаем веб-сервер в фоновом потоке
-    keep_alive()
-    print("Веб-сервер запущен, включаю бота...")
-    
-    # 2. Запускаем самого бота (замени на свою команду, если она отличается)
-    bot.infinity_polling(none_stop=True)
-
-
-# Словарь для хранения истории чата для каждого пользователя
-# Ключ — id пользователя в Телеграм, значение — объект чата Gemini
-user_chats = {}
-
+# --- ОБРАБОТЧИКИ ТЕЛЕГРАМ БОТА ---
 @dp.message(CommandStart())
-async def start_cmd(message: types.Message):
-    user_id = message.from_user.id
-    
-    # При старте создаем чистый диалог с системной инструкцией (характером бота)
-    user_chats[user_id] = ai_client.chats.create(
-        model="gemini-2.5-flash",
-        config=ai_types.GenerateContentConfig(
-            system_instruction="Ты — крутой, сообразительный и дружелюбный ИИ-ассистент в Telegram. Отвечай кратко, ёмко и по делу."
-        )
-    )
-    
-    await message.reply(
-        f"Привет, {message.from_user.first_name}! 👋\n"
-        "Я твой личный ИИ-бот с памятью. Я запоминаю наш диалог, так что можешь общаться со мной как с реальным собеседником!"
-    )
+async def cmd_start(message: types.Message):
+    await message.reply("Привет! Я твой ИИ-ассистент. Напиши мне что-нибудь, и я отвечу с помощью Gemini!")
 
 @dp.message()
 async def handle_message(message: types.Message):
-    user_id = message.from_user.id
-    
-    # Если пользователь не нажал /start, но сразу пишет, создаем ему сессию чата
-    if user_id not in user_chats:
-        user_chats[user_id] = ai_client.chats.create(model="gemini-2.5-flash")
-        
+    # Отправляем статус "печатает...", пока ИИ думает
     await message.bot.send_chat_action(chat_id=message.chat.id, action="typing")
     
     try:
-        # Берем чат конкретного пользователя и отправляем туда сообщение
-        # Метод send_message автоматически сохраняет историю внутри этой сессии!
-        chat = user_chats[user_id]
-        response = chat.send_message(message.text)
-        
+        # Запрос к модели gemini-2.5-flash через новый SDK
+        response = ai_client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=message.text,
+        )
         await message.reply(response.text)
-        
     except Exception as e:
+        print(f"Ошибка Gemini: {e}")
         await message.reply(f"Ошибка при генерации ответа: {e}")
 
+# --- ГЛАВНЫЙ ЗАПУСК ---
 async def main():
-    print("ИИ-Бот запущен через VS Code...")
-    await dp.start_polling(bot)
-
-if __name__ == "__main__":
-    asyncio.run(main())
-
-
-
-
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "Бот запущен!"
-
-def run():
-    port = int(os.environ.get("PORT", 8000))
-    app.run(host='0.0.0.0', port=port)
-
-def keep_alive():
-    t = Thread(target=run)
-    t.start()
-
-# Главная функция запуска aiogram
-async def main():
-    keep_alive() # Включаем веб-сервер для Render
-    print("Сервер запущен, включаю aiogram бота...")
-    
-    # Твой объект dispatcher (dp) должен быть создан выше в коде
-    await dp.start_polling(bot) 
-
-
-
-async def main():
-    # 1. Сначала запускаем веб-сервер, чтобы Render сразу увидел открытый порт
+    # 1. Сначала запускаем веб-сервер для проверки портов Render
     await start_web_server()
     
-    print("ИИ-Бот запущен через VS Code...")
+    print("ИИ-Бот успешно запущен и готов к работе...")
     
-    # 2. Запускаем опрос Telegram (убедись, что dp и bot созданы выше в коде)
+    # 2. Запускаем бесконечный опрос Telegram
     await dp.start_polling(bot)
 
 if name == "main":
