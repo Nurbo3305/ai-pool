@@ -23,6 +23,34 @@ dp = Dispatcher()
 # Инициализируем клиента Gemini
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 
+
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Бот запущен и работает!"
+
+def run():
+    # Render сам выдает порт, на котором должен работать "сайт"
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
+if __name__ == "__main__":
+    # 1. Запускаем веб-сервер в фоновом потоке
+    keep_alive()
+    print("Веб-сервер запущен, включаю бота...")
+    
+    # 2. Запускаем самого бота (замени на свою команду, если она отличается)
+    bot.infinity_polling(none_stop=True)
+
+
 # Словарь для хранения истории чата для каждого пользователя
 # Ключ — id пользователя в Телеграм, значение — объект чата Gemini
 user_chats = {}
