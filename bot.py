@@ -35,9 +35,7 @@ async def start_web_server():
     print(f"Веб-сервер успешно запущен на порту {port}")
 
 
-@app.route('/')
-def home():
-    return "Бот запущен и работает!"
+
 
 def run():
     # Render сам выдает порт, на котором должен работать "сайт"
