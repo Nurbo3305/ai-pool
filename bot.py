@@ -33,7 +33,7 @@ async def start_web_server():
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
     print(f"Веб-сервер успешно запущен на порту {port}")
-app = Flask('')
+
 
 @app.route('/')
 def home():
