@@ -99,3 +99,33 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+    import asyncio
+from flask import Flask
+from threading import Thread
+import os
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Бот запущен!"
+
+def run():
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
+# Главная функция запуска aiogram
+async def main():
+    keep_alive() # Включаем веб-сервер для Render
+    print("Сервер запущен, включаю aiogram бота...")
+    
+    # Твой объект dispatcher (dp) должен быть создан выше в коде
+    await dp.start_polling(bot) 
+
+if __name__ == "__main__":
+    asyncio.run(main())
