@@ -1,5 +1,12 @@
-from flask import Flask
-from threading import Thread
+# from flask import Flask
+# from threading import Thread
+# import os
+# import asyncio
+# from aiogram import Bot, Dispatcher, types
+# from aiogram.filters import CommandStart
+# from google import genai
+# from google.genai import types as ai_types
+# from dotenv import load_dotenv
 import os
 import asyncio
 from aiogram import Bot, Dispatcher, types
@@ -7,7 +14,25 @@ from aiogram.filters import CommandStart
 from google import genai
 from google.genai import types as ai_types
 from dotenv import load_dotenv
+from aiohttp import web  # Используем aiohttp вместо Flask
 
+load_dotenv()
+
+# --- КРОШЕЧНЫЙ ВЕБ-СЕРВЕР ДЛЯ RENDER ---
+async def handle(request):
+    return web.Response(text="Бот запущен и работает!")
+
+async def start_web_server():
+    app = web.Application()
+    app.router.add_get('/', handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    
+    # Берём порт, который требует Render, или 8000 по умолчанию
+    port = int(os.environ.get("PORT", 8000))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    print(f"Веб-сервер успешно запущен на порту {port}")
 app = Flask('')
 
 @app.route('/')
@@ -125,5 +150,16 @@ async def main():
     # Твой объект dispatcher (dp) должен быть создан выше в коде
     await dp.start_polling(bot) 
 
-if __name__ == "__main__":
+
+
+async def main():
+    # 1. Сначала запускаем веб-сервер, чтобы Render сразу увидел открытый порт
+    await start_web_server()
+    
+    print("ИИ-Бот запущен через VS Code...")
+    
+    # 2. Запускаем опрос Telegram (убедись, что dp и bot созданы выше в коде)
+    await dp.start_polling(bot)
+
+if name == "main":
     asyncio.run(main())
