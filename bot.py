@@ -1,31 +1,12 @@
-### Шаг 2. Обновлённый код с памятью (для bot.py)
-
-
+from flask import Flask
+from threading import Thread
+import os
 import asyncio
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
 from google import genai
 from google.genai import types as ai_types
-
-# -- НАСТРОЙКИ --
-import os
 from dotenv import load_dotenv
-
-load_dotenv()  # Эта строка находит файл .env и загружает ключи
-# Инициализируем бота и диспетчер
-
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-bot = Bot(token=TELEGRAM_TOKEN)
-dp = Dispatcher()
-
-# Инициализируем клиента Gemini
-ai_client = genai.Client(api_key=GEMINI_API_KEY)
-
-
-from flask import Flask
-from threading import Thread
 
 app = Flask('')
 
@@ -41,6 +22,25 @@ def run():
 def keep_alive():
     t = Thread(target=run)
     t.start()
+
+
+load_dotenv()  # Эта строка находит файл .env и загружает ключи
+# Инициализируем бота и диспетчер
+
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+bot = Bot(token=TELEGRAM_TOKEN)
+dp = Dispatcher()
+
+# Инициализируем клиента Gemini
+ai_client = genai.Client(api_key=GEMINI_API_KEY)
+
+async def main():
+    keep_alive() # <--- Добавь эту строчку сюда!
+    print("ИИ-Бот запущен через VS Code...")
+    await dp.start_polling(bot)
+
 
 if __name__ == "__main__":
     # 1. Запускаем веб-сервер в фоновом потоке
@@ -100,10 +100,8 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
-    import asyncio
-from flask import Flask
-from threading import Thread
-import os
+
+
 
 app = Flask('')
 
