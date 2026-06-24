@@ -232,5 +232,5 @@ async def main():
     # 2. Запускаем бесконечный опрос Telegram
     await dp.start_polling(bot)
 
-if name == "main":
+if __name__ == "__main__":
     asyncio.run(main())
